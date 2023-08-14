@@ -27,6 +27,18 @@ class _Expenses extends State<Expenses> {
     ),
   ];
 
+  void _openAddExpenseOverlay() {
+    // a modalBottomSheet receives temporary focus at the bottom of the screen,
+    // greying out other widgets; to revert focus, the user clicks the greyed-out area;
+    // the context stores metadata that relates this widget to all others in a
+    // tree-like data structure; "context" below is global and is distinct from "ctx"
+    // which is specific to the ModalBottomSheet widget
+    showModalBottomSheet(
+      context: context,
+      builder: (ctx) => const Text("Modal Bottom Sheet"),
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     // Scaffold has prebuilt widgets to manage the title bar and other commonly
@@ -37,7 +49,7 @@ class _Expenses extends State<Expenses> {
         title: const Text('Expenses tracking app'),
         actions: [
           IconButton(
-            onPressed: () {},
+            onPressed: _openAddExpenseOverlay,
             icon: const Icon(
               (Icons.add),
             ),
