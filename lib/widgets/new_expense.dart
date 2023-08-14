@@ -1,5 +1,9 @@
+import 'package:expense_tracker/models/expense.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
+import 'package:intl/intl.dart';
+
+final formatter = DateFormat.yMd();
 
 class NewExpense extends StatefulWidget {
   const NewExpense({super.key});
@@ -15,19 +19,32 @@ class _NewExpenseState extends State<NewExpense> {
   final _textInputController = TextEditingController();
   final _numericalInputController = TextEditingController();
 
-  void _presentDatePicker() {
+  DateTime? _selectedDateTime;
+
+  // async indicates that some value will be assigned in the future (i.e. is of
+  // the generic type Future<>
+  void _presentDatePicker() async {
     final dateTimeNow = DateTime.now();
     final firstDateTime = DateTime(
       dateTimeNow.year - 1,
       dateTimeNow.month,
       dateTimeNow.day,
     );
-    showDatePicker(
+
+    // this potentially null for the time-being
+    final pickedDateTime = await showDatePicker(
       context: context,
       initialDate: dateTimeNow,
       firstDate: firstDateTime,
       lastDate: dateTimeNow,
     );
+
+    // code from this point onwards will not execute until _selectedDateTime is
+    // assigned; alternatively, showDatePicker returns a Future<> which has a
+    // method then() (somewhat similar to JS promises) - see https://dart.dev/codelabs/async-await
+    setState(() {
+       _selectedDateTime = pickedDateTime;
+    });
   }
 
   // remove the widget when done (not in view) from the modal page
@@ -77,7 +94,8 @@ class _NewExpenseState extends State<NewExpense> {
                   // centre the row's widgets vertically (cosmetic, and optional)
                   crossAxisAlignment: CrossAxisAlignment.center,
                   children: [
-                    const Text('Selected date '),
+                    // the ! operator indicates the variable can never be null
+                    Text(_selectedDateTime == null ? 'No date picked' : dateFormatter.format(_selectedDateTime!)),
                     IconButton(
                       onPressed: _presentDatePicker,
                       icon: const Icon(Icons.calendar_month),
