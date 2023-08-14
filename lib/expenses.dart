@@ -29,7 +29,21 @@ class _Expenses extends State<Expenses> {
 
   @override
   Widget build(BuildContext context) {
+    // Scaffold has prebuilt widgets to manage the title bar and other commonly
+    // used widgets
     return Scaffold(
+      // AppBar takes care of space above the AppBar
+      appBar: AppBar(
+        title: const Text('Expenses tracking app'),
+        actions: [
+          IconButton(
+            onPressed: () {},
+            icon: const Icon(
+              (Icons.add),
+            ),
+          ),
+        ],
+      ),
       body: Column(
         children: [
           const Text(
