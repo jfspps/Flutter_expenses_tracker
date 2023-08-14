@@ -15,6 +15,21 @@ class _NewExpenseState extends State<NewExpense> {
   final _textInputController = TextEditingController();
   final _numericalInputController = TextEditingController();
 
+  void _presentDatePicker() {
+    final dateTimeNow = DateTime.now();
+    final firstDateTime = DateTime(
+      dateTimeNow.year - 1,
+      dateTimeNow.month,
+      dateTimeNow.day,
+    );
+    showDatePicker(
+      context: context,
+      initialDate: dateTimeNow,
+      firstDate: firstDateTime,
+      lastDate: dateTimeNow,
+    );
+  }
+
   // remove the widget when done (not in view) from the modal page
   @override
   void dispose() {
@@ -36,14 +51,41 @@ class _NewExpenseState extends State<NewExpense> {
               label: Text('Enter expense title'),
             ),
           ),
-          TextField(
-            controller: _numericalInputController,
-            maxLength: 10,
-            keyboardType: const TextInputType.numberWithOptions(decimal: true),
-            decoration: const InputDecoration(
-              prefixText: '£ ',
-              label: Text('Enter amount'),
-            ),
+          Row(
+            children: [
+              // expand TextField and Row (for dateTimePicker) but also prevent
+              // both from taking more than they need
+              Expanded(
+                child: TextField(
+                  controller: _numericalInputController,
+                  maxLength: 10,
+                  keyboardType:
+                      const TextInputType.numberWithOptions(decimal: true),
+                  decoration: const InputDecoration(
+                    prefixText: '£ ',
+                    label: Text('Enter amount'),
+                  ),
+                ),
+              ),
+              const SizedBox(
+                width: 10,
+              ),
+              Expanded(
+                child: Row(
+                  // horizontal alignment in this case
+                  mainAxisAlignment: MainAxisAlignment.end,
+                  // centre the row's widgets vertically (cosmetic, and optional)
+                  crossAxisAlignment: CrossAxisAlignment.center,
+                  children: [
+                    const Text('Selected date '),
+                    IconButton(
+                      onPressed: _presentDatePicker,
+                      icon: const Icon(Icons.calendar_month),
+                    ),
+                  ],
+                ),
+              ),
+            ],
           ),
           Row(
             children: [
@@ -57,11 +99,13 @@ class _NewExpenseState extends State<NewExpense> {
                 child: const Text('Save'),
               ),
               TextButton(
-                onPressed: () {},
+                onPressed: () {
+                  Navigator.pop(context);
+                },
                 child: const Text('Cancel'),
               ),
             ],
-          )
+          ),
         ],
       ),
     );
