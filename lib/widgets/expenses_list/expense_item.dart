@@ -34,14 +34,15 @@ class ExpenseItem extends StatelessWidget {
                 // goal here is to group widgets under another row for UI purposes
                 Row(
                   children: [
-                    const Icon(
-                      Icons.alarm,
+                    Icon(
+                      categoryIcons[expense.category],
                     ),
                     const SizedBox(
                       width: 8,
                     ),
                     Text(
-                      expense.date.toString(),
+                      // calling a getter without parenthesise
+                      expense.formattedDate,
                     ),
                   ],
                 )

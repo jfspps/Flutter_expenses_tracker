@@ -1,8 +1,19 @@
+import 'package:flutter/material.dart';
+import 'package:intl/intl.dart';
 import 'package:uuid/uuid.dart';
+
+final dateFormatter = DateFormat.yMd();
 
 const uuid = Uuid();
 
 enum Category { food, travel, leisure, work }
+
+const categoryIcons = {
+  Category.food: Icons.lunch_dining,
+  Category.travel: Icons.flight_takeoff,
+  Category.leisure: Icons.movie,
+  Category.work: Icons.work,
+};
 
 class Expense {
   final String id;
@@ -17,4 +28,9 @@ class Expense {
     required this.date,
     required this.category,
   }) : id = uuid.v4();
+
+  // a Dart getter; when calling getters, parenthesise are not needed
+  String get formattedDate {
+    return dateFormatter.format(date);
+  }
 }
