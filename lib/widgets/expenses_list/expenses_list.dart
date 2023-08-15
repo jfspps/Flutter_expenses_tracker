@@ -7,9 +7,12 @@ class ExpensesList extends StatelessWidget {
   const ExpensesList({
     super.key,
     required this.expenses,
+    required this.removeExpense
   });
 
   final List<Expense> expenses;
+
+  final void Function(Expense expense) removeExpense;
 
   @override
   Widget build(BuildContext context) {
@@ -18,8 +21,18 @@ class ExpensesList extends StatelessWidget {
     // reference to a different Context object
     return ListView.builder(
       itemCount: expenses.length,
-      itemBuilder: (ctx, index) => ExpenseItem(
-        expenses[index],
+      // allow expense items to be swiped away
+      itemBuilder: (ctx, index) => Dismissible(
+        // key is a unique identifier and requires another unique identifier
+        // with ValueKey taking the index of the element
+        key: ValueKey(expenses[index]),
+        // need this to update the calling parent widget; the "direction" param
+        // is ignored in this case but can be used to define functionality if
+        // one were to swipe left or right
+        onDismissed: (direction) => removeExpense(expenses[index]),
+        child: ExpenseItem(
+          expenses[index],
+        ),
       ),
     );
   }

@@ -1,5 +1,6 @@
 import 'package:expense_tracker/widgets/expenses_list/expenses_list.dart';
 import 'package:expense_tracker/widgets/new_expense.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:expense_tracker/models/expense.dart';
 
@@ -32,6 +33,18 @@ class _Expenses extends State<Expenses> {
   void _addExpense(Expense expense){
     setState(() {
       expensesList.add(expense);
+      if (kDebugMode) {
+        print("Added expense: ${expense.title} dated ${expense.formattedDate}");
+      }
+    });
+  }
+
+  void _removeExpense(Expense expense){
+    setState(() {
+      expensesList.remove(expense);
+      if (kDebugMode) {
+        print("Removed expense: ${expense.title} dated ${expense.formattedDate}");
+      }
     });
   }
 
@@ -60,6 +73,7 @@ class _Expenses extends State<Expenses> {
           Expanded(
             child: ExpensesList(
               expenses: expensesList,
+              removeExpense: _removeExpense,
             ),
           ),
         ],
