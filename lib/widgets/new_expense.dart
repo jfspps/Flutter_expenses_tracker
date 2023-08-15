@@ -1,7 +1,8 @@
-import 'package:expense_tracker/models/expense.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
+
+import '../models/expense.dart';
 
 final formatter = DateFormat.yMd();
 
@@ -20,6 +21,8 @@ class _NewExpenseState extends State<NewExpense> {
   final _numericalInputController = TextEditingController();
 
   DateTime? _selectedDateTime;
+
+  ExpenseCategory _selectedExpenseCategory = ExpenseCategory.work;
 
   // async indicates that some value will be assigned in the future (i.e. is of
   // the generic type Future<>
@@ -43,7 +46,7 @@ class _NewExpenseState extends State<NewExpense> {
     // assigned; alternatively, showDatePicker returns a Future<> which has a
     // method then() (somewhat similar to JS promises) - see https://dart.dev/codelabs/async-await
     setState(() {
-       _selectedDateTime = pickedDateTime;
+      _selectedDateTime = pickedDateTime;
     });
   }
 
@@ -95,7 +98,9 @@ class _NewExpenseState extends State<NewExpense> {
                   crossAxisAlignment: CrossAxisAlignment.center,
                   children: [
                     // the ! operator indicates the variable can never be null
-                    Text(_selectedDateTime == null ? 'No date picked' : dateFormatter.format(_selectedDateTime!)),
+                    Text(_selectedDateTime == null
+                        ? 'No date picked'
+                        : dateFormatter.format(_selectedDateTime!)),
                     IconButton(
                       onPressed: _presentDatePicker,
                       icon: const Icon(Icons.calendar_month),
@@ -107,6 +112,28 @@ class _NewExpenseState extends State<NewExpense> {
           ),
           Row(
             children: [
+              DropdownButton(
+                  value: _selectedExpenseCategory,
+                  items: ExpenseCategory.values
+                      .map(
+                        (expenseCategory) => DropdownMenuItem(
+                          value: expenseCategory,
+                          child: Text(expenseCategory.name.toUpperCase()),
+                        ),
+                      )
+                      .toList(),
+                  onChanged: (value) {
+                    if (value != null) {
+                      if (kDebugMode) {
+                        print(value);
+                      }
+
+                      setState(() {
+                        _selectedExpenseCategory = value;
+                      });
+                    }
+                  }),
+              const Spacer(),
               ElevatedButton(
                 onPressed: () {
                   if (kDebugMode) {
