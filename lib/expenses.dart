@@ -27,6 +27,7 @@ class _Expenses extends State<Expenses> {
       // forces modal page to use entire page and can be scrolled close
       isScrollControlled: true,
       builder: (ctx) => NewExpense(_addExpense),
+      backgroundColor: Theme.of(context).backgroundColor,
     );
   }
 
@@ -64,11 +65,13 @@ class _Expenses extends State<Expenses> {
           content: const Text(
             'Expense item removed',
           ),
-          action: SnackBarAction(label: 'UNDO', onPressed: () {
-            setState(() {
-              _addExpense(expense);
-            });
-          }),
+          action: SnackBarAction(
+              label: 'UNDO',
+              onPressed: () {
+                setState(() {
+                  _addExpense(expense);
+                });
+              }),
         ),
       );
     });
@@ -94,8 +97,12 @@ class _Expenses extends State<Expenses> {
     return Scaffold(
       // AppBar takes care of space above the AppBar
       appBar: AppBar(
-        title: const Text(
+        title: Text(
           'Expenses tracking app',
+          style: TextStyle(
+            // see main.dart for titleLarge
+            color: Theme.of(context).textTheme.titleLarge!.color
+          ),
         ),
         actions: [
           IconButton(

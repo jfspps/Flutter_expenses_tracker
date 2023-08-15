@@ -4,11 +4,8 @@ import 'package:flutter/material.dart';
 import '../../models/expense.dart';
 
 class ExpensesList extends StatelessWidget {
-  const ExpensesList({
-    super.key,
-    required this.expenses,
-    required this.removeExpense
-  });
+  const ExpensesList(
+      {super.key, required this.expenses, required this.removeExpense});
 
   final List<Expense> expenses;
 
@@ -30,6 +27,10 @@ class ExpensesList extends StatelessWidget {
         // is ignored in this case but can be used to define functionality if
         // one were to swipe left or right
         onDismissed: (direction) => removeExpense(expenses[index]),
+        // borrow from the "global theme" in main.dart
+        background: Container(
+          color: Theme.of(context).colorScheme.tertiary,
+        ),
         child: ExpenseItem(
           expenses[index],
         ),

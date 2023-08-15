@@ -82,16 +82,16 @@ class _NewExpenseState extends State<NewExpense> {
   }
 
   void _saveNewExpense() {
-      final titleGiven = _expenseTitleInputController.text;
-      final amountGiven = double.tryParse(_expenseAmountInputController.text);
+    final titleGiven = _expenseTitleInputController.text;
+    final amountGiven = double.tryParse(_expenseAmountInputController.text);
 
-      final newExpense = Expense(
-          title: titleGiven,
-          amount: amountGiven!,
-          date: _selectedDateTime!,
-          category: _selectedExpenseCategory);
+    final newExpense = Expense(
+        title: titleGiven,
+        amount: amountGiven!,
+        date: _selectedDateTime!,
+        category: _selectedExpenseCategory);
 
-      widget.addExpense(newExpense);
+    widget.addExpense(newExpense);
   }
 
   // remove the widget when done (not in view) from the modal page
@@ -144,9 +144,13 @@ class _NewExpenseState extends State<NewExpense> {
                   crossAxisAlignment: CrossAxisAlignment.center,
                   children: [
                     // the ! operator indicates the variable can never be null
-                    Text(_selectedDateTime == null
-                        ? 'No date picked'
-                        : dateFormatter.format(_selectedDateTime!)),
+                    Text(
+                      _selectedDateTime == null
+                          ? 'No date picked'
+                          : dateFormatter.format(_selectedDateTime!),
+                      style: TextStyle(
+                          color: Theme.of(context).textTheme.bodySmall!.color),
+                    ),
                     IconButton(
                       onPressed: _presentDatePicker,
                       icon: const Icon(Icons.calendar_month),
@@ -159,37 +163,48 @@ class _NewExpenseState extends State<NewExpense> {
           Row(
             children: [
               DropdownButton(
-                  value: _selectedExpenseCategory,
-                  items: ExpenseCategory.values
-                      .map(
-                        (expenseCategory) => DropdownMenuItem(
-                          value: expenseCategory,
-                          child: Text(expenseCategory.name.toUpperCase()),
+                value: _selectedExpenseCategory,
+                items: ExpenseCategory.values
+                    .map(
+                      (expenseCategory) => DropdownMenuItem(
+                        value: expenseCategory,
+                        child: Text(
+                          expenseCategory.name.toUpperCase(),
+                          // see main.dart for bodyLarge
+                          style: TextStyle(
+                            color: Theme.of(context).textTheme.bodyLarge!.color,
+                          ),
                         ),
-                      )
-                      .toList(),
-                  onChanged: (value) {
-                    if (value != null) {
-                      setState(() {
-                        _selectedExpenseCategory = value;
-                      });
-                    }
-                  }),
+                      ),
+                    )
+                    .toList(),
+                onChanged: (value) {
+                  if (value != null) {
+                    setState(() {
+                      _selectedExpenseCategory = value;
+                    });
+                  }
+                },
+              ),
               const Spacer(),
               ElevatedButton(
                 onPressed: () {
-                  if (_validUserInput()){
+                  if (_validUserInput()) {
                     _saveNewExpense();
                     Navigator.pop(context);
                   }
                 },
-                child: const Text('Save'),
+                child: const Text(
+                  'Save',
+                ),
               ),
               TextButton(
                 onPressed: () {
                   Navigator.pop(context);
                 },
-                child: const Text('Cancel'),
+                child: const Text(
+                  'Cancel',
+                ),
               ),
             ],
           ),

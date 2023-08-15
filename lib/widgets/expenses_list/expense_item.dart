@@ -16,7 +16,11 @@ class ExpenseItem extends StatelessWidget {
         ),
         child: Column(
           children: [
-            Text(expense.title),
+            Text(
+              expense.title,
+              style: TextStyle(
+                  color: Theme.of(context).textTheme.bodyLarge!.color),
+            ),
             const SizedBox(
               height: 5,
             ),
@@ -27,6 +31,8 @@ class ExpenseItem extends StatelessWidget {
                   // adhering to symbols used to insert values to a string;
                   // a $ symbol, unlike the £ symbol, would need to be escaped with \
                   '£${expense.amount.toStringAsFixed(2)}',
+                  style: TextStyle(
+                      color: Theme.of(context).textTheme.bodyLarge!.color),
                 ),
                 // Spacer widgets use all space available between widgets defined
                 // before and after the Spacer
@@ -43,6 +49,9 @@ class ExpenseItem extends StatelessWidget {
                     Text(
                       // calling a getter without parenthesise
                       expense.formattedDate,
+                      style: TextStyle(
+                        color: Theme.of(context).textTheme.bodySmall!.color,
+                      ),
                     ),
                   ],
                 )
