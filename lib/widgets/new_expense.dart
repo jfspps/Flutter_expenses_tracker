@@ -1,4 +1,3 @@
-import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 
@@ -7,7 +6,9 @@ import '../models/expense.dart';
 final formatter = DateFormat.yMd();
 
 class NewExpense extends StatefulWidget {
-  const NewExpense({super.key});
+  const NewExpense(this.addExpense, {super.key});
+
+  final void Function(Expense expense) addExpense;
 
   @override
   State<StatefulWidget> createState() {
@@ -18,7 +19,7 @@ class NewExpense extends StatefulWidget {
 class _NewExpenseState extends State<NewExpense> {
   // takes care of text input when the modal screen is required
   final _expenseTitleInputController = TextEditingController();
-  final _numericalInputController = TextEditingController();
+  final _expenseAmountInputController = TextEditingController();
 
   DateTime? _selectedDateTime;
 
@@ -50,9 +51,9 @@ class _NewExpenseState extends State<NewExpense> {
     });
   }
 
-  void _validUserInput() {
+  bool _validUserInput() {
     // returns null on failure
-    final amountEntered = double.tryParse(_numericalInputController.text);
+    final amountEntered = double.tryParse(_expenseAmountInputController.text);
 
     final validAmountEntered = amountEntered != null && amountEntered >= 0;
 
@@ -74,13 +75,29 @@ class _NewExpenseState extends State<NewExpense> {
                   ),
                 ],
               ));
+      return false;
     }
+
+    return true;
+  }
+
+  void _saveNewExpense() {
+      final titleGiven = _expenseTitleInputController.text;
+      final amountGiven = double.tryParse(_expenseAmountInputController.text);
+
+      final newExpense = Expense(
+          title: titleGiven,
+          amount: amountGiven!,
+          date: _selectedDateTime!,
+          category: _selectedExpenseCategory);
+
+      widget.addExpense(newExpense);
   }
 
   // remove the widget when done (not in view) from the modal page
   @override
   void dispose() {
-    _numericalInputController.dispose();
+    _expenseAmountInputController.dispose();
     _expenseTitleInputController.dispose();
     super.dispose();
   }
@@ -88,12 +105,14 @@ class _NewExpenseState extends State<NewExpense> {
   @override
   Widget build(BuildContext context) {
     return Padding(
-      padding: const EdgeInsets.all(16),
+      // ensure that this as a modal page is pushed down more to avoid overlap
+      padding: const EdgeInsets.fromLTRB(16, 48, 16, 16),
       child: Column(
         children: [
           TextField(
             controller: _expenseTitleInputController,
             maxLength: 50,
+            keyboardType: TextInputType.text,
             decoration: const InputDecoration(
               label: Text('Enter expense title'),
             ),
@@ -104,7 +123,7 @@ class _NewExpenseState extends State<NewExpense> {
               // both from taking more than they need
               Expanded(
                 child: TextField(
-                  controller: _numericalInputController,
+                  controller: _expenseAmountInputController,
                   maxLength: 10,
                   keyboardType:
                       const TextInputType.numberWithOptions(decimal: true),
@@ -151,10 +170,6 @@ class _NewExpenseState extends State<NewExpense> {
                       .toList(),
                   onChanged: (value) {
                     if (value != null) {
-                      if (kDebugMode) {
-                        print(value);
-                      }
-
                       setState(() {
                         _selectedExpenseCategory = value;
                       });
@@ -163,13 +178,10 @@ class _NewExpenseState extends State<NewExpense> {
               const Spacer(),
               ElevatedButton(
                 onPressed: () {
-                  if (kDebugMode) {
-                    print(
-                        'Expense title: ${_expenseTitleInputController.text}');
-                    print('Amount: ${_numericalInputController.text}');
+                  if (_validUserInput()){
+                    _saveNewExpense();
+                    Navigator.pop(context);
                   }
-                  _validUserInput();
-                  // todo: need to save new expense
                 },
                 child: const Text('Save'),
               ),

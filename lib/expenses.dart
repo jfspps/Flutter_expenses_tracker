@@ -13,31 +13,26 @@ class Expenses extends StatefulWidget {
 }
 
 class _Expenses extends State<Expenses> {
-  final List<Expense> _dummyList = [
-    Expense(
-      title: "Movie",
-      amount: 50,
-      date: DateTime.now(),
-      category: ExpenseCategory.leisure,
-    ),
-    Expense(
-      title: "Demo",
-      amount: 140,
-      date: DateTime.now(),
-      category: ExpenseCategory.work,
-    ),
-  ];
+  final List<Expense> expensesList = [];
 
   void _openAddExpenseOverlay() {
-    // a modalBottomSheet receives temporary focus at the bottom of the screen,
-    // greying out other widgets; to revert focus, the user clicks the greyed-out area;
-    // the context stores metadata that relates this widget to all others in a
-    // tree-like data structure; "context" below is global and is distinct from "ctx"
-    // which is specific to the ModalBottomSheet widget
-    showModalBottomSheet(
-      context: context,
-      builder: (ctx) => const NewExpense(),
-    );
+      // a modalBottomSheet receives temporary focus at the bottom of the screen,
+      // greying out other widgets; to revert focus, the user clicks the greyed-out area;
+      // the context stores metadata that relates this widget to all others in a
+      // tree-like data structure; "context" below is global and is distinct from "ctx"
+      // which is specific to the ModalBottomSheet widget
+      showModalBottomSheet(
+        context: context,
+        // forces modal page to use entire page and can be scrolled close
+        isScrollControlled: true,
+        builder: (ctx) => NewExpense(_addExpense),
+      );
+  }
+
+  void _addExpense(Expense expense){
+    setState(() {
+      expensesList.add(expense);
+    });
   }
 
   @override
@@ -64,7 +59,7 @@ class _Expenses extends State<Expenses> {
           ),
           Expanded(
             child: ExpensesList(
-              expenses: _dummyList,
+              expenses: expensesList,
             ),
           ),
         ],
