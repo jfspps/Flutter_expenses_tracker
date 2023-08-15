@@ -17,7 +17,7 @@ class NewExpense extends StatefulWidget {
 
 class _NewExpenseState extends State<NewExpense> {
   // takes care of text input when the modal screen is required
-  final _textInputController = TextEditingController();
+  final _expenseTitleInputController = TextEditingController();
   final _numericalInputController = TextEditingController();
 
   DateTime? _selectedDateTime;
@@ -50,11 +50,38 @@ class _NewExpenseState extends State<NewExpense> {
     });
   }
 
+  void _validUserInput() {
+    // returns null on failure
+    final amountEntered = double.tryParse(_numericalInputController.text);
+
+    final validAmountEntered = amountEntered != null && amountEntered >= 0;
+
+    if (_expenseTitleInputController.text.trim().isEmpty ||
+        !validAmountEntered ||
+        _selectedDateTime == null) {
+      showDialog(
+          context: context,
+          builder: (dialogCtx) => AlertDialog(
+                title: const Text('Invalid data entered'),
+                content: const Text(
+                    'Please check a valid title, amount and date were entered'),
+                actions: [
+                  TextButton(
+                    onPressed: () {
+                      Navigator.pop(dialogCtx);
+                    },
+                    child: const Text('Retry'),
+                  ),
+                ],
+              ));
+    }
+  }
+
   // remove the widget when done (not in view) from the modal page
   @override
   void dispose() {
     _numericalInputController.dispose();
-    _textInputController.dispose();
+    _expenseTitleInputController.dispose();
     super.dispose();
   }
 
@@ -65,7 +92,7 @@ class _NewExpenseState extends State<NewExpense> {
       child: Column(
         children: [
           TextField(
-            controller: _textInputController,
+            controller: _expenseTitleInputController,
             maxLength: 50,
             decoration: const InputDecoration(
               label: Text('Enter expense title'),
@@ -137,9 +164,12 @@ class _NewExpenseState extends State<NewExpense> {
               ElevatedButton(
                 onPressed: () {
                   if (kDebugMode) {
-                    print('Expense title: ${_textInputController.text}');
+                    print(
+                        'Expense title: ${_expenseTitleInputController.text}');
                     print('Amount: ${_numericalInputController.text}');
                   }
+                  _validUserInput();
+                  // todo: need to save new expense
                 },
                 child: const Text('Save'),
               ),
